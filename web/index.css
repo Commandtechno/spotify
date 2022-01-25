@@ -1,0 +1,81 @@
+:root {
+  --background: rgb(32, 32, 32);
+  --shadow: rgba(0, 0, 0, 0.5);
+
+  --accent: rgb(255, 255, 255);
+  --accent-secondary: rgb(128, 128, 128);
+}
+
+html,
+body {
+  color: var(--accent);
+  font-family: "Consola", monospace;
+}
+
+body {
+  width: 640px;
+  height: 160px;
+  margin: 8px;
+}
+
+#player {
+  display: flex;
+  align-items: center;
+
+  padding: 16px;
+  border-radius: 24px;
+
+  box-shadow: 4px 4px 16px var(--shadow);
+  background-color: var(--background);
+}
+
+#cover {
+  width: 128px;
+  height: 128px;
+  border-radius: 16px;
+}
+
+#content {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+  width: 464px;
+  margin-left: 16px;
+}
+
+#progress,
+#progress-bar {
+  height: 8px;
+  border-radius: 4px;
+}
+
+#progress {
+  margin-top: 8px;
+  background-color: var(--accent-secondary);
+}
+
+#progress-bar {
+  min-width: 8px;
+  max-width: 100%;
+  transition: width 1s;
+  background-color: var(--accent);
+}
+
+#title,
+#author,
+#album {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#author,
+#album {
+  font-size: 16px;
+}
