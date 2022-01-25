@@ -46,7 +46,7 @@ window.addEventListener("load", () => {
       return;
     }
 
-    const cover = player.item.album.images[0]?.url ?? "fallback.svg";
+    const cover = player.item.album.images[0] ? player.item.album.images[0].url : "fallback.svg";
     const title = player.item.name;
     const author = player.item.artists[0].name;
     const album = player.item.album.name;
