@@ -40,5 +40,6 @@ jobs:
         
       - name: The Fucking
         run: |
-         chmod +x ./setup/build.bash
-         ./setup/build.bash
+          cd setup
+          chmod +x ./build.bash
+          ./build.bash
