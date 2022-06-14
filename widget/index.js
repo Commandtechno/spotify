@@ -1,3 +1,5 @@
+const refreshToken = new URLSearchParams(location.search).get("refresh_token");
+
 let accessToken = localStorage.getItem("accessToken");
 let expiresAt = localStorage.getItem("expiresAt");
 
@@ -19,13 +21,6 @@ async function getToken() {
 }
 
 window.addEventListener("load", () => {
-  try {
-    refreshToken;
-  } catch {
-    document.write("<h1>Please run the setup script first</h1>");
-    return;
-  }
-
   const playerElement = document.getElementById("player");
   const coverElement = document.getElementById("cover");
   const titleElement = document.getElementById("title");
@@ -46,9 +41,9 @@ window.addEventListener("load", () => {
       return;
     }
 
-    const cover = player.item.album.images[0] ? player.item.album.images[0].url : "fallback.svg";
+    const cover = player.item.album.images[0]?.url ?? "fallback.svg";
     const title = player.item.name;
-    const author = player.item.artists[0].name;
+    const author = player.item.artists.map(artist => artist.name).join(", ");
     const album = player.item.album.name;
     const progress = player.progress_ms;
     const duration = player.item.duration_ms;
