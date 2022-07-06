@@ -1,59 +1,74 @@
-const refreshToken = new URLSearchParams(location.search).get("refresh_token");
+const $player = document.getElementById("player");
+const $cover = document.getElementById("cover");
+const $title = document.getElementById("title");
+const $author = document.getElementById("author");
+const $album = document.getElementById("album");
+const $progressBar = document.getElementById("progress-bar");
 
-let accessToken = localStorage.getItem("accessToken");
-let expiresAt = localStorage.getItem("expiresAt");
+const refresh_token = new URLSearchParams(location.search).get("refresh_token");
+if (!refresh_token) return alert("No refresh token found");
+
+let access_token = localStorage.getItem("access_token");
+let expires_at = Number(localStorage.getItem("expires_at"));
+
+function show(element) {
+  element.style.display = null;
+}
+
+function hide(element) {
+  element.style.display = "none";
+}
 
 async function getToken() {
-  if (accessToken && expiresAt > Date.now()) return accessToken;
-  const res = await fetch("https://commandtechno.com/spotify/token/refresh", {
+  if (access_token && expires_at && expires_at > Date.now()) return access_token;
+  const res = await fetch("/spotify/api/get_access_token", {
     method: "POST",
-    body: refreshToken,
+    body: JSON.stringify({ refresh_token }),
     headers: { "Content-Type": "text/plain" }
   }).then(res => res.json());
 
-  accessToken = res.access_token;
-  expiresAt = Date.now() + res.expires_in * 1000;
+  access_token = res.access_token;
+  expires_at = Date.now() + res.expires_in * 1_000;
 
-  localStorage.setItem("accessToken", accessToken);
-  localStorage.setItem("expiresAt", expiresAt);
+  localStorage.setItem("access_token", access_token);
+  localStorage.setItem("expires_at", expires_at);
 
-  return accessToken;
+  return access_token;
 }
 
-window.addEventListener("load", () => {
-  const playerElement = document.getElementById("player");
-  const coverElement = document.getElementById("cover");
-  const titleElement = document.getElementById("title");
-  const authorElement = document.getElementById("author");
-  const albumElement = document.getElementById("album");
-  const progressBarElement = document.getElementById("progress-bar");
+async function update() {
+  const token = await getToken();
+  let res;
 
-  setInterval(async () => {
-    const token = await getToken();
-    let player;
+  try {
+    res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => res.json());
+  } catch {
+    $player.style.display = "none";
+    return;
+  }
 
-    try {
-      player = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(res => res.json());
-    } catch {
-      playerElement.style.display = "none";
-      return;
-    }
+  const cover = res.item.album.images[0]?.url;
+  if (!cover) {
+    hide($cover);
+  } else if (cover !== $cover.src) {
+    $cover.src = cover;
+    $cover.style.display = null;
+  }
 
-    const cover = player.item.album.images[0]?.url ?? "fallback.svg";
-    const title = player.item.name;
-    const author = player.item.artists.map(artist => artist.name).join(", ");
-    const album = player.item.album.name;
-    const progress = player.progress_ms;
-    const duration = player.item.duration_ms;
+  const title = res.item.name;
+  const author =
+    res.item.artists.length && "by " + res.item.artists.map(artist => artist.name).join(", ");
+  const album = res.item.album.name && "on " + res.item.album.name;
 
-    coverElement.src = cover;
-    titleElement.innerText = title;
-    authorElement.innerText = author && "by " + author;
-    albumElement.innerText = album && "on " + album;
-    progressBarElement.style.width = `${(progress / duration) * 100}%`;
+  if (title && $title.innerText !== title) $title.innerText = title;
+  if (author && $author.innerText !== author) $author.innerText = author;
+  if (album && $album.innerText !== album) $album.innerText = album;
 
-    playerElement.style.display = null;
-  }, 1000);
-});
+  $progressBar.style.width = `${(res.progress_ms / res.item.duration_ms) * 100}%`;
+  $player.style.display = null;
+}
+
+update();
+setInterval(update, 1_000);

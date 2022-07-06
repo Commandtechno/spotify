@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "dev": "parcel ./callback/index.html ./widget/index.html --public-url /spotify --dist-dir build",
+    "build": "parcel build ./callback/index.html ./widget/index.html --dist-dir build"
+  },
+  "dependencies": {
+    "parcel": "^2.6.0"
+  }
+}
