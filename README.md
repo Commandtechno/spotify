@@ -1,4 +1,4 @@
-![spotify widget](https://commandtechno.com/i/7mkt0iq5r57a.png)
+![demo](https://user-images.githubusercontent.com/68407783/182300714-5787b6be-00f6-47c8-9ff0-0661726df9a6.png)
 
 setup at https://commandtechno.com/spotify/login
 
