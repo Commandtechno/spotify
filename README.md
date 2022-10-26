@@ -3,3 +3,5 @@
 setup at https://commandtechno.com/spotify/login
 
 currently waiting for the application to be approved by spotify
+
+update: they denied it for a stupid random reason and im too busy to fill out the giant form again rn
